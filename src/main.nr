@@ -20,7 +20,7 @@ pub contract Counter {
         total_counter: PublicMutable<u128, Context>,
     }
 
-    /// @dev Initialize the contract
+    /// @dev Initialize the contract publicly 
     /// @param owner The address of the owner
     #[public]
     #[initializer]
@@ -39,9 +39,18 @@ pub contract Counter {
     #[private]
     fn increment() {
         let sender = context.msg_sender();
-        let counters = storage.counters;
-        counters.at(sender).add(1, sender, sender);
+        storage.counters.at(sender).add(1, sender, sender);
         // Enqueue public call
+        Counter::at(context.this_address()).total_counter_increment_internal().enqueue(&mut context);
+    }
+
+    #[private]
+    fn increment_others(
+        other_counter: AztecAddress
+    ) {
+        assert(storage.owner.read() == context.msg_sender());
+        let counters = storage.counters;
+        counters.at(other_counter).add(1, other_counter, context.msg_sender());
         Counter::at(context.this_address()).total_counter_increment_internal().enqueue(&mut context);
     }
 

@@ -1,21 +1,16 @@
 use crate::Counter;
-use aztec::{prelude::AztecAddress, test::helpers::test_environment::TestEnvironment};
+use aztec::{
+    prelude::AztecAddress, 
+    oracle::execution::get_contract_address, 
+    test::helpers::test_environment::TestEnvironment,
+    test::helpers::cheatcodes,
+};
 
-pub unconstrained fn setup_contract(
-    with_account_contracts: bool,
-) -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress) {
+pub unconstrained fn setup_contract() -> (&mut TestEnvironment, AztecAddress, AztecAddress, AztecAddress) {
     // Setup env, generate keys
     let mut env = TestEnvironment::new();
-    let (owner, user) = if with_account_contracts {
-        let owner = env.create_account_contract(1);
-        let user = env.create_account_contract(2);
-        (owner, user)
-    } else {
-        let owner = env.create_account(1);
-        let user = env.create_account(2);
-        (owner, user)
-    };
-
+    let owner = env.create_account(1);
+    let user = env.create_account(2);
     let contract_address = deploy_contract(&mut env, owner);
 
     (&mut env, contract_address, owner, user)
@@ -30,7 +25,19 @@ pub unconstrained fn deploy_contract(
         .deploy_self("Counter")
         .with_public_void_initializer(owner, initializer_call_interface)
         .to_address();
-    env.advance_block_by(1);
 
     contract_address
+}
+
+
+unconstrained fn get_private_counter(user: AztecAddress, contract_address: AztecAddress) -> Field {
+    // cheatcodes set address to counter
+    let current_contract_address = get_contract_address();
+    cheatcodes::set_contract_address(contract_address);
+    // get utility function call
+    let private_counter = Counter::get_counter(user);
+    // re-set contract address to original
+    cheatcodes::set_contract_address(current_contract_address);
+    // return the counter
+    private_counter
 }
