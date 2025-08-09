@@ -11,8 +11,15 @@ pub contract Counter {
     use easy_private_state::EasyPrivateUint;
     use value_note::{balance_utils};
 
-    // @param owner The address of the owner
-    // @param counter A numerical value
+    
+    /// @title Counter contract
+    /// @notice Maintains private per-user counters and a public total counter.
+    /// @dev Demonstrates mixed private/public execution and a utility view for tests.
+
+    /// @dev Storage layout for the Counter contract
+    /// @param owner The address with permission to increment others' counters
+    /// @param counters Private counters mapped by `AztecAddress`
+    /// @param total_counter Public total increments across all users
     #[storage]
     struct Storage<Context> {
         owner: PublicImmutable<AztecAddress, Context>,
@@ -20,7 +27,8 @@ pub contract Counter {
         total_counter: PublicMutable<u128, Context>,
     }
 
-    /// @dev Initialize the contract publicly 
+    /// @notice Initializes the contract
+    /// @dev Public initializer sets the `owner`.
     /// @param owner The address of the owner
     #[public]
     #[initializer]
@@ -28,14 +36,15 @@ pub contract Counter {
         storage.owner.initialize(owner);
     }
 
-    /// @dev Retrieves the owner of the contract
-    /// @return The owner of the contract
+    /// @notice Returns the owner of the contract
+    /// @return AztecAddress The owner address
     #[public]
     fn get_owner() -> AztecAddress {
         storage.owner.read()
     }
 
-    /// @dev Increments the counter
+    /// @notice Increments the caller's private counter
+    /// @dev Private function. Also enqueues a public total counter increment.
     #[private]
     fn increment() {
         let sender = context.msg_sender();
@@ -44,6 +53,9 @@ pub contract Counter {
         Counter::at(context.this_address()).total_counter_increment_internal().enqueue(&mut context);
     }
 
+    /// @notice Increments another user's private counter
+    /// @dev Only callable by the owner. Also increments the public total counter.
+    /// @param other_counter The address whose counter will be incremented
     #[private]
     fn increment_others(
         other_counter: AztecAddress
@@ -54,14 +66,15 @@ pub contract Counter {
         Counter::at(context.this_address()).total_counter_increment_internal().enqueue(&mut context);
     }
 
-    /// @dev Retrieves the counter value
-    /// @return The current counter value
+    /// @notice Reads the public total counter
+    /// @return u128 The current total counter value
     #[public]
     fn get_total_counter() -> u128 {
         storage.total_counter.read()
     }
 
-    /// @dev Increments the counter
+    /// @notice Internal public function to increment the total counter
+    /// @dev Enqueued by private functions
     #[public]
     #[internal]
     fn total_counter_increment_internal() {
@@ -69,6 +82,10 @@ pub contract Counter {
         storage.total_counter.write(current_value + 1);
     }
 
+    /// @notice Utility function to read a user's private counter
+    /// @dev Exposed for tests and off-chain apps; cannot be called from private/public fns
+    /// @param owner Address whose counter to read
+    /// @return Field The counter value as a Field
     #[utility]
     unconstrained fn get_counter(owner: AztecAddress) -> Field {
         let counters = storage.counters;
