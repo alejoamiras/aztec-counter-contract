@@ -27,3 +27,13 @@ unconstrained fn increment_others_success() {
     bob_counter = utils::get_private_counter(bob, contract_address);
     assert(bob_counter == 1);
 }
+
+#[test(should_fail_with = "only owner")]
+unconstrained fn increment_others_fail() {
+    // Create Alice and Bob's addresses and deploy the contract
+    let (env, contract_address, _, bob) = utils::setup_contract();
+    // We impersonate Bob (who is not the owner)
+    env.impersonate(bob);
+    // Call increment from Bob
+    Counter::at(contract_address).increment_others(bob).call(&mut env.private());
+}

@@ -48,7 +48,7 @@ pub contract Counter {
     fn increment_others(
         other_counter: AztecAddress
     ) {
-        assert(storage.owner.read() == context.msg_sender());
+        assert(storage.owner.read() == context.msg_sender(), "only owner");
         let counters = storage.counters;
         counters.at(other_counter).add(1, other_counter, context.msg_sender());
         Counter::at(context.this_address()).total_counter_increment_internal().enqueue(&mut context);
