@@ -3,7 +3,6 @@ pub mod test;
 
 #[aztec]
 pub contract Counter {
-    // aztec library imports
     use aztec::{
         macros::{functions::{initializer, internal, private, public, utility}, storage::storage},
         prelude::{AztecAddress, Map, PublicImmutable, PublicMutable},
