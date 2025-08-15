@@ -1,3 +1,5 @@
+> 🎮 **Want to skip ahead and play with privacy?** Try our [Interactive Playground](https://aztec-private-playground-59.lovable.app/) to experiment with private counters right now!
+
 # 🎯 The Private Counter Adventure: An Aztec.nr Tutorial
 
 *Welcome, developer! Today we're building something cool - a Counter that keeps individual numbers private while making the total public. Think of it as a sealed box where only you can see your number inside, but everyone can verify the total sum of all the numbers inside the box.*
@@ -7,6 +9,7 @@
 - [Understanding the Contract](#-chapter-2-understanding-the-contract)
 - [Testing](#-chapter-3-testing-the-contract)
 - [Experiments](#-chapter-4-experiment-time)
+- [Interactive Playground](#-interactive-playground) 🎮
 - [Troubleshooting](#-errors-you-might-encounter)
 
 ## 📚 What You'll Learn
@@ -209,5 +212,31 @@ Ready to dive deeper?
 - [Aztec Smart Contracts Guide](https://docs.aztec.network/developers/guides/smart_contracts) - The complete documentation
 - [Migration Notes](https://docs.aztec.network/migration_notes) - What's new in the latest version
 - [Aztec Starter](https://github.com/AztecProtocol/aztec-starter#readme) - More example projects
+
+## 🎮 Interactive Playground
+
+Ready to experiment hands-on with the Counter contract? We've built an interactive playground where you can:
+
+- **Deploy & Test**: Deploy the default Counter contract or upload your own modified version
+- **Experience Privacy**: Switch between Alice, Bob, and Owner to see privacy in action
+- **Real-time Interaction**: Increment counters and see zero-knowledge proofs being generated
+- **Learn by Doing**: Understand how private state works through direct experimentation
+
+**🚀 [Try the Counter Contract Playground](https://aztec-private-playground-59.lovable.app/)**
+
+The playground connects to your local Aztec sandbox and lets you interact with the exact contract you just learned about. Perfect for:
+- Testing contract modifications
+- Understanding user privacy isolation  
+- Seeing zero-knowledge proofs in action
+- Experimenting with different scenarios
+
+### Using Your Own Contract
+
+1. Make modifications to the Counter contract in `src/main.nr`
+2. Generate new artifacts: `aztec codegen -o src/artifacts target` 
+3. Upload the generated `counter-Counter.json` file in the playground
+4. Deploy and test your changes instantly!
+
+---
 
 *Now go build amazing things with your newfound knowledge of private state! The combination of privacy and transparency opens up entirely new design patterns. Happy coding! 🚀*
