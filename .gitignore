@@ -1,3 +1,4 @@
 target
 codegenCache.json
 src/artifacts
+.vscode
